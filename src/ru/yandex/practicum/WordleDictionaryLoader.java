@@ -40,9 +40,9 @@ public class WordleDictionaryLoader {
             }
 
             dict.setWords(wordList);
-            this.logger.println("Загружено "+ wordList.size() +" слов");
+            this.logger.println("Загружено " + wordList.size() + " слов");
             return dict;
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             this.logger.println("Файл словаря не найден: " + filename);
             throw new FileDictionaryNotFound("[CRITICAL] Файл словаря (" + filename + ") не найден");
         }  catch (IOException e) {
