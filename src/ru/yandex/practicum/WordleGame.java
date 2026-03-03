@@ -38,6 +38,7 @@ public class WordleGame {
 
     private int steps;
     private int stepsLeft;
+    private int hintLeft;
 
     public boolean isWin = false;
 
@@ -48,6 +49,7 @@ public class WordleGame {
         this.stepsLeft = DEFAULT_STEPS_COUNT;
         this.dictionary = dictionary;
         this.logger = logger;
+        this.hintLeft = 3;
     }
 
     public String getAnswer() {
@@ -60,6 +62,10 @@ public class WordleGame {
 
     public int getSteps() {
         return steps;
+    }
+
+    public int getHintLeft() {
+        return hintLeft;
     }
 
     public void setWin(boolean win) {
@@ -171,7 +177,12 @@ public class WordleGame {
             this.exectPositions.put(0, answer.charAt(0));
         }
 
+        if (this.hintLeft == 0) {
+            throw new ImpossibleToFindHint("Подсказки закончились.");
+        }
+
         List<String> hints = getHintList();
+        this.hintLeft--;
         return hints.get(rnd.nextInt(hints.size()));
     }
 
@@ -234,7 +245,7 @@ public class WordleGame {
 
         logger.println("Результат хода: " + word + " -> " + pattern);
 
-        return new StepResult(word, pattern, isHint);
+        return new StepResult(word, pattern, isHint, this.hintLeft);
     }
 
     public int getStepsLeft() {

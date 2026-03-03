@@ -31,6 +31,7 @@ public class Wordle {
             System.out.println("Загадано слово из " + WordleGame.DEFAULT_WORDS_LENGTH + " букв.");
             System.out.println("У вас " + WordleGame.DEFAULT_STEPS_COUNT + " попыток.");
             System.out.println("* Пустая строка - запрос подсказки.");
+            System.out.println("* Для выхода введите: стоп");
 
 
             try (Scanner scanner = new Scanner(System.in)) {
@@ -39,24 +40,29 @@ public class Wordle {
                     System.out.print("Введите слово: ");
                     String input = scanner.nextLine();
 
-                    if (WordleDictionary.normalize(input).equals(game.getAnswer())) {
-                        System.out.println("ПОБЕДА!!!\nВы угадали слово!");
-                        game.setWin(true);
-                        logger.println("Игра окончена. Игрок победил!");
-                        break;
+                    if (input.toLowerCase().trim().equals("стоп")) {
+                        return;
                     } else {
-                        try {
-                            StepResult stepResult = game.makeStep(input);
-                            if (stepResult.isHint()) {
-                                System.out.println("Подсказка: " + stepResult.word());
+                        if (WordleDictionary.normalize(input).equals(game.getAnswer())) {
+                            System.out.println("ПОБЕДА!!!\nВы угадали слово!");
+                            game.setWin(true);
+                            logger.println("Игра окончена. Игрок победил!");
+                            break;
+                        } else {
+                            try {
+                                StepResult stepResult = game.makeStep(input);
+                                if (stepResult.isHint()) {
+                                    System.out.println("Подсказка: " + stepResult.word());
+                                    System.out.println("Осталось подсказок : " + stepResult.hintLeft());
+                                }
+                                System.out.println("Результат: " + stepResult.pattern());
+                            } catch (WordNotFoundInDictionary | WordHasIncorrectLength | RepeatedAnswerException e) {
+                                System.out.println(e.getMessage());
+                            } catch (ImpossibleToFindHint e) {
+                                System.out.println(e.getMessage());
+                                System.out.println("Попробуйте угадать слово самостоятельно!");
+                                logger.println("Критическая ошибка подсказки: " + e.getMessage());
                             }
-                            System.out.println("Результат: " + stepResult.pattern());
-                        } catch (WordNotFoundInDictionary | WordHasIncorrectLength | RepeatedAnswerException e) {
-                            System.out.println(e.getMessage());
-                        } catch (ImpossibleToFindHint e) {
-                            System.out.println(e.getMessage());
-                            System.out.println("Попробуйте угадать слово самостоятельно!");
-                            logger.println("Критическая ошибка подсказки: " + e.getMessage());
                         }
                     }
                 }
